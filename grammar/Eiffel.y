@@ -3,9 +3,17 @@
 %define parser_class_name {Eiffel}
 %define public
 %define package ru.spbau.tishchenko.compilers.eiffel.parser
+%code imports {
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.*;
+    import ru.spbau.tishchenko.compilers.eiffel.language.Operator;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.OperatorStub;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.ExpressionStub;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.UnaryStub;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.BinaryStub;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Variable;
+}
 
 /* Bison Declarations */
-/*%token <Integer> NUM "number"*/
 %token <Integer> INTEGER_LITERAL
 %token <Double> REAL_LITERAL
 %token <String> STRING_LITERAL
@@ -26,17 +34,17 @@
 %type <String> Manifest_string
 %type <Boolean> Boolean_constant
 
-%type <String> Variable /* targets id */
-%type <String> Expression /* targets memory area */
-%type <String> Basic_expression
-%type <String> Special_expression
-%type <String> Operator_expression
-%type <String> Unary_expression
-%type <String> Binary_expression
-%type <String> Manifest_constant
-%type <String> Manifest_value
-%type <String> Binary
-%type <String> Unary
+%type <Variable> Variable /* targets id */
+%type <ExpressionStub> Expression /* targets memory area */
+%type <ExpressionStub> Basic_expression
+%type <ExpressionStub> Special_expression
+%type <ExpressionStub> Operator_expression
+%type <ExpressionStub> Unary_expression
+%type <ExpressionStub> Binary_expression
+%type <Object> Manifest_constant
+%type <Object> Manifest_value
+%type <Operator> Binary
+%type <Operator> Unary
 
 %nonassoc EQ LEQ GEQ GT LT /* comparison            */
 %left NOT AND OR XOR IMPLIES
@@ -44,9 +52,14 @@
 %left MULT RDIV IDIV
 %left POW    /* exponentiation        */
 
+%token THEN
+%token ELSE
+
 %code {
     private int const_counter = 0;
     private int expr_counter = 0;
+    
+    private IntermediateCodeGenerator generator = IntermediateCodeGenerator.getInstance();
     
     private String getLocalVar() {
         return "e" + Integer.toString(expr_counter++);
@@ -69,11 +82,11 @@ Instruction:
 ;
     
 Assignment:
-    Variable ASSIGN Expression { System.out.println($1 + " := " + $3); }
+    Variable ASSIGN Expression { generator.appendCode($3.setResult($1)); }
 ;
     
 Variable:
-    IDENTIFIER { $$ = $1; }
+    IDENTIFIER { $$ = new Variable($1); }
 ;
 
 Expression:
@@ -91,40 +104,44 @@ Operator_expression :
 ;
     
 Unary_expression:
-    Unary Expression { $$ = getLocalVar();
-                       System.out.println($$ + " := " + $1 + " " + $2); }
+    Unary Expression { $$ = ((UnaryStub)$1.getStub()).setArgument(generator.appendExpression($2)); }
 ;
 
 Binary_expression:
-    Expression Binary Expression { $$ = getLocalVar();
-                                   System.out.println($$ + " := " + $1 + " " + $2 + " " + $3); }
+    Expression Binary Expression { Variable arg1 = generator.appendExpression($1);
+                                   Variable arg2 = generator.appendExpression($3);
+                                   $$ = ((BinaryStub)$2.getStub()).setArguments(arg1, arg2); }
 ;
     
 Unary:
-    NOT { $$ = "not"; }
+    NOT { $$ = Operator.NOT; }
+    | MINUS { $$ = Operator.NEG; }
+    | PLUS { $$ = Operator.UNARY_PLUS; }
 ;
     
 Binary:
-    PLUS { $$ = "+"; }
-    | MINUS { $$ = "-"; }
-    | MULT { $$ = "*"; }
-    | RDIV { $$ = "/"; }
-    | IDIV { $$ = "//"; }
-    | MOD { $$ = "\\\\"; }
-    | POW { $$ = "^"; }
-    | EQ { $$ = "="; }
-    | GT { $$ = ">"; }
-    | LT { $$ = "<"; }
-    | GEQ { $$ = ">="; }
-    | LEQ { $$ = "<="; }
-    | AND { $$ = "and"; }
-    | OR { $$ = "or"; }
-    | XOR { $$ = "xor"; }
-    | IMPLIES { $$ = "implies"; }
+    PLUS { $$ = Operator.PLUS; }
+    | MINUS { $$ = Operator.MINUS; }
+    | MULT { $$ = Operator.MULT; }
+    | RDIV { $$ = Operator.RDIV; }
+    | IDIV { $$ = Operator.IDIV; }
+    | MOD { $$ = Operator.MOD; }
+    /*| POW { $$ = Operator.ADD; }*/
+    | EQ { $$ = Operator.EQ; }
+    | GT { $$ = Operator.GT; }
+    | LT { $$ = Operator.LT; }
+    | GEQ { $$ = Operator.GEQ; }
+    | LEQ { $$ = Operator.LEQ; }
+    | AND { $$ = Operator.AND; }
+    | OR { $$ = Operator.OR; }
+    | XOR { $$ = Operator.XOR; }
+    | IMPLIES { $$ = Operator.IMPLIES; }
+    | OR ELSE { $$ = Operator.ORELSE; }
+    | AND THEN { $$ = Operator.ANDTHEN; }
 ;
     
 Special_expression:
-    Manifest_constant {$$ = $1; }
+    Manifest_constant { $$ = generator.bindConstant($1); }
 ;
     
 Manifest_constant:
@@ -132,14 +149,10 @@ Manifest_constant:
 ;
     
 Manifest_value:
-    Boolean_constant { $$ = getStaticVar();
-                       System.out.println($$ + " := " + $1.toString()); } 
-    | Integer_constant { $$ = getStaticVar();
-                         System.out.println($$ + " := " + $1.toString()); } 
-    | Real_constant { $$ = getStaticVar();
-                      System.out.println($$ + " := " + $1.toString()); } 
-    | Manifest_string { $$ = getStaticVar();
-                        System.out.println($$ + " := " + $1.toString()); }
+    Boolean_constant { $$ = $1; } 
+    | Integer_constant { $$ = $1; } 
+    | Real_constant { $$ = $1; } 
+    | Manifest_string { $$ = $1; }
 ;
     
 Boolean_constant:
@@ -158,37 +171,4 @@ Real_constant:
 Manifest_string:
     STRING_LITERAL { $$ = $1; }
 ;
-
-/*input:
-  line 
-  | input line
-;
-
-line:
-  '\n'
-| exp '\n' { System.out.println($1.intValue()); }
-| error '\n'
-;
-
-exp:
-  NUM                { $$ = $1;                                             }
-| exp '=' exp
-  {
-    if ($1.intValue () != $3.intValue ())
-      yyerror ( "calc: error: " + $1 + " != " + $3);
-  }
-| exp '+' exp        { $$ = new Integer ($1.intValue () + $3.intValue ());  }
-| exp '-' exp        { $$ = new Integer ($1.intValue () - $3.intValue ());  }
-| exp '*' exp        { $$ = new Integer ($1.intValue () * $3.intValue ());  }
-| exp '/' exp        { $$ = new Integer ($1.intValue () / $3.intValue ());  }
-| '-' exp  %prec NEG { $$ = new Integer (-$2.intValue ());                  }
-| exp '^' exp        { $$ = new Integer ((int)
-                                         Math.pow ($1.intValue (),
-                                                   $3.intValue ()));        }
-| '(' exp ')'        { $$ = $2;                                             }
-| '(' error ')'      { $$ = new Integer (1111);                             }
-| '!'                { $$ = new Integer (0); return YYERROR;                }
-| '-' error          { $$ = new Integer (0); return YYERROR;                }
-; */
-
 %%

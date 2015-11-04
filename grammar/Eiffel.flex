@@ -65,8 +65,12 @@ RealLiteral = {DecIntegerLiteral}?"."{DecIntegerLiteral} | {DecIntegerLiteral}".
                                    return Eiffel.Lexer.TRUE; }
   "False"                        { yylval = Boolean.FALSE;
                                    return Eiffel.Lexer.FALSE; }
+                                   
+  /* control structures */
+  "then"                         { return Eiffel.Lexer.THEN; }
+  "else"                         { return Eiffel.Lexer.ELSE; }
 
-  /*arithmetic operators */
+  /* arithmetic operators */
   ":="                           { return Eiffel.Lexer.ASSIGN; }
   "+"                            { return Eiffel.Lexer.PLUS; }
   "-"                            { return Eiffel.Lexer.MINUS; }
