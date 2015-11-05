@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ru.spbau.tishchenko.compilers.eiffel.codegeneration.ConstantsPool;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntermediateCodeGenerator;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntermediateInstruction;
 import ru.spbau.tishchenko.compilers.eiffel.parser.Eiffel;
@@ -22,14 +23,22 @@ public class Main {
 			EiffelLexer lexer = new EiffelLexer(fis);
 			Eiffel parser = new Eiffel(lexer);
 			parser.parse();
-			ArrayList<IntermediateInstruction> intermediateCode = IntermediateCodeGenerator.getInstance().getCode();
-			printToOut(intermediateCode);
+			IntermediateCodeGenerator intermediateCode = IntermediateCodeGenerator.getInstance();
+			printToOut(intermediateCode.getStatics());
+			System.out.println();
+			printToOut(intermediateCode.getCode());
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found "+ e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.err.println("Unknown IO error: " + e.getMessage());
 			e.printStackTrace();
+		}
+	}
+
+	private static void printToOut(ConstantsPool statics) {
+		for (String constant: statics.getConstantsTable()) {
+			System.out.println(constant);
 		}
 	}
 

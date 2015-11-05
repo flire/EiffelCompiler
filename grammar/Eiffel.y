@@ -34,6 +34,16 @@
 %type <String> Manifest_string
 %type <Boolean> Boolean_constant
 
+%type <InstructionSequence> Assignment
+%type <InstructionSequence> Instruction
+%type <InstructionSequence> Compound
+%type <InstructionSequence> Conditional
+%type <InstructionSequence> Then_part_list
+%type <InstructionSequence> Then_part
+%type <InstructionSequence> Else_part
+
+%type <ExpressionSequence> Boolean_expression
+
 %type <Variable> Variable /* targets id */
 %type <ExpressionStub> Expression /* targets memory area */
 %type <ExpressionStub> Basic_expression
@@ -52,8 +62,11 @@
 %left MULT RDIV IDIV
 %left POW    /* exponentiation        */
 
+%token IF
 %token THEN
+%token ELSEIF
 %token ELSE
+%token END
 
 %code {
     private int const_counter = 0;
@@ -72,17 +85,25 @@
 
 /* Grammar follows */
 %%
+Effective_routine :
+    Internal
+;
+Internal :
+    Compound { generator.setCode($1); }
+;
+
 Compound:
-    Instruction LINE_TERMINATOR
-    | Compound Instruction LINE_TERMINATOR
+    Instruction LINE_TERMINATOR { $$ = $1; }
+    | Instruction LINE_TERMINATOR Compound { $$ = $1.append($3); }
 ;
     
 Instruction:
-    Assignment
+    Assignment { $$ = $1; }
+    | Conditional { $$ = $1; }
 ;
     
 Assignment:
-    Variable ASSIGN Expression { generator.appendCode($3.setResult($1)); }
+    Variable ASSIGN Expression { $$ = $3.setResult($1); }
 ;
     
 Variable:
@@ -104,13 +125,21 @@ Operator_expression :
 ;
     
 Unary_expression:
-    Unary Expression { $$ = ((UnaryStub)$1.getStub()).setArgument(generator.appendExpression($2)); }
+    Unary Expression { ExpressionSequence expr = generator.generateExpression($2);
+                       Variable arg = expr.result;
+                       $$ = ((UnaryStub)$1.getStub())
+                       .setArgument(arg)
+                       .insertPreceedingCode(expr); }
 ;
 
 Binary_expression:
-    Expression Binary Expression { Variable arg1 = generator.appendExpression($1);
-                                   Variable arg2 = generator.appendExpression($3);
-                                   $$ = ((BinaryStub)$2.getStub()).setArguments(arg1, arg2); }
+    Expression Binary Expression { ExpressionSequence expr1 = generator.generateExpression($1);
+                                   Variable arg1 = expr1.result;
+                                   ExpressionSequence expr2 = generator.generateExpression($3);
+                                   Variable arg2 = expr2.result;
+                                   $$ = ((BinaryStub)$2.getStub())
+                                   .setArguments(arg1, arg2)
+                                   .insertPreceedingCode(expr1.append(expr2)); }
 ;
     
 Unary:
@@ -170,5 +199,30 @@ Real_constant:
     
 Manifest_string:
     STRING_LITERAL { $$ = $1; }
+;
+
+Conditional :
+    IF Then_part_list Else_part END { $$ = $2.append($3); }
+    | IF Then_part_list END { $$ = $2; }
+;
+
+Then_part_list :
+    Then_part { $$ = $1; }
+    | Then_part ELSEIF Then_part_list { $$ = $1.append($3); }
+;
+
+Then_part :
+    Boolean_expression THEN Compound { ExpressionSequence expr = $1;
+                                       $$ = generator.wrapWithIfClause(expr.result, $3)
+                                       .insertPreceedingCode(expr); }
+;
+
+Else_part :
+    ELSE Compound { $$ = $2; }
+;
+
+Boolean_expression :
+    Basic_expression { $$ = generator.generateExpression($1); }
+    | Boolean_constant { $$ = generator.generateExpression(generator.bindConstant($1)); }
 ;
 %%

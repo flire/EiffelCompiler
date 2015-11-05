@@ -6,10 +6,6 @@ public class UnaryStub extends OperatorStub{
 
 	final StubVariable argPlaceholder = new StubVariable();
 	
-	UnaryStub(boolean isLabelAfterNeeded) {
-		super(isLabelAfterNeeded);
-	}
-
 	public ExpressionStub setArgument(Variable arg) {
 		argPlaceholder.setEffectiveVariable(arg);
 		return new ExpressionStub(this);

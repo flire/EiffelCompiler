@@ -6,10 +6,6 @@ public class BinaryStub extends OperatorStub {
 	final StubVariable firstArgPlaceholder = new StubVariable();
 	final StubVariable secondArgPlaceholder = new StubVariable();
 	
-	public BinaryStub(boolean isLabelAfterNeeded) {
-		super(isLabelAfterNeeded);
-	}
-	
 	public ExpressionStub setArguments(Variable firstArg, Variable secondArg) {
 		firstArgPlaceholder.setEffectiveVariable(firstArg);
 		secondArgPlaceholder.setEffectiveVariable(secondArg);

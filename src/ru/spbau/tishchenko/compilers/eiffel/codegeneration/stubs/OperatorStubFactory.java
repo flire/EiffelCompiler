@@ -1,8 +1,6 @@
 package ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs;
 
-import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntermediateCodeGenerator;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntermediateInstruction.Operation;
-import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Variable;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.instructions.Assignment;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.instructions.BinaryOperator;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.instructions.Conditional;
@@ -10,7 +8,7 @@ import ru.spbau.tishchenko.compilers.eiffel.codegeneration.instructions.UnaryOpe
 
 public class OperatorStubFactory {
 	public static BinaryStub getRegularBinaryOperation(Operation operation) {
-		BinaryStub result = new BinaryStub(false);
+		BinaryStub result = new BinaryStub();
 		result.addInstruction(new BinaryOperator(result.resultPlaceholder, operation, result.firstArgPlaceholder,
 				result.secondArgPlaceholder));
 		return result;
@@ -25,13 +23,13 @@ public class OperatorStubFactory {
 	}
 	
 	public static UnaryStub getRegularUnaryOperation(Operation operation) {
-		UnaryStub result = new UnaryStub(false);
+		UnaryStub result = new UnaryStub();
 		result.addInstruction(new UnaryOperator(result.resultPlaceholder, operation, result.argPlaceholder));
 		return result;
 	}
 	
 	public static UnaryStub getUnaryPlusStub() {
-		UnaryStub result = new UnaryStub(false);
+		UnaryStub result = new UnaryStub();
 		result.addInstruction(new Assignment(result.resultPlaceholder, result.argPlaceholder));
 		return result;
 	}
@@ -39,10 +37,10 @@ public class OperatorStubFactory {
 	//TODO: support power operator
 
 	private static BinaryStub getShortCurcuitExpression(Operation operation, Operation jumpCondition) {
-		BinaryStub result = new BinaryStub(true);
+		BinaryStub result = new BinaryStub();
 		result.addInstruction(
 				new Assignment(result.resultPlaceholder, result.firstArgPlaceholder)); // res := a1
-		result.addInstruction(
+		result.addStubJump(
 				new Conditional(jumpCondition,
 						result.firstArgPlaceholder)); // jmp a1 L
 		result.addInstruction(
@@ -54,9 +52,9 @@ public class OperatorStubFactory {
 	}
 
 	public static OperatorStub getImpliesOperation() {
-		BinaryStub result = new BinaryStub(true);
+		BinaryStub result = new BinaryStub();
 		result.addInstruction(new UnaryOperator(result.resultPlaceholder, Operation.NOT, result.firstArgPlaceholder));
-		result.addInstruction(
+		result.addStubJump(
 				new Conditional(Operation.IF,
 						result.firstArgPlaceholder)); // jmp a1 L
 		result.addInstruction(

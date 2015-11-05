@@ -2,31 +2,30 @@ package ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs;
 
 import java.util.ArrayList;
 
+import ru.spbau.tishchenko.compilers.eiffel.codegeneration.ExpressionSequence;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.InstructionSequence;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntermediateInstruction;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Variable;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.instructions.Assignment;
 
-public class ExpressionStub {
-	private final ArrayList<IntermediateInstruction> instructions;
-	private final boolean isLabelNeeded;
+public class ExpressionStub extends InstructionSequence {
+//	private final ArrayList<IntermediateInstruction> instructions;
+//	private final boolean isLabelNeeded;
 	final StubVariable resultPlaceholder;
 
 	ExpressionStub(OperatorStub operatorStub) {
-		this.instructions = operatorStub.instructions;
+		super(operatorStub);
+//		this.instructions = operatorStub.instructions;
 		this.resultPlaceholder = operatorStub.resultPlaceholder;
-		this.isLabelNeeded = operatorStub.isLabelAfterNeeded;
 	}
 	
 	ExpressionStub()  {
-		instructions = new ArrayList<>();
-		isLabelNeeded = false;
 		resultPlaceholder = new StubVariable();
 	}
 	
-	public InstructionSequence setResult(Variable result) {
+	public ExpressionSequence setResult(Variable result) {
 		resultPlaceholder.setEffectiveVariable(result);
-		return new InstructionSequence(instructions, isLabelNeeded);
+		return new ExpressionSequence(this, result);
 	}
 	
 	public static ExpressionStub StubWithVariable(Variable variable) {
@@ -35,4 +34,8 @@ public class ExpressionStub {
 		result.instructions.add(assignment);
 		return result;
 	}
+//	
+//	public void preeceedWith(InstructionSequence preceedingCode) {
+//		instructions.addAll(0, preceedingCode.getInstructions());
+//	}
 }
