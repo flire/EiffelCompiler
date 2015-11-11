@@ -6,29 +6,19 @@ import ru.spbau.tishchenko.compilers.eiffel.codegeneration.instructions.Jump;
 
 public class InstructionSequence {
 	protected ArrayList<IntermediateInstruction> instructions;
-//	protected boolean isLabelAfterNeeded;
-	protected ArrayList<Jump> instructionsToResolveWithLabel;// = new ArrayList<>();
+	protected ArrayList<Jump> instructionsToResolveWithLabel;
 
 	public InstructionSequence(InstructionSequence code) {
 		instructions = new ArrayList<>(code.instructions);
 		instructionsToResolveWithLabel = new ArrayList<>(code.instructionsToResolveWithLabel);
-//		this.isLabelAfterNeeded = isLabelAfterNeeded;
 	}
 	
 	public InstructionSequence() {
 		instructions = new ArrayList<>();
-//		isLabelAfterNeeded = false;
 		instructionsToResolveWithLabel = new ArrayList<>();
 	}
 	
-	
-	
 	void resolveLabels(Label label) {
-//		for (IntermediateInstruction instr: instructions) {
-//			if (instr instanceof Jump) {
-//				((Jump) instr).setJumpLabel(label);
-//			}
-//		}
 		for (Jump jump: instructionsToResolveWithLabel) {
 			jump.setJumpLabel(label);
 		}
@@ -62,12 +52,6 @@ public class InstructionSequence {
 		return instructions;
 	}
 
-//	public void append(InstructionSequence other, Label label) {
-//		resolveLabels(label);
-//		other.instructions.get(0).setLabel(label);
-//		append(other);
-//	}
-	
 	public boolean isLabelAfterNeeded() {
 		return !instructionsToResolveWithLabel.isEmpty();
 	}
