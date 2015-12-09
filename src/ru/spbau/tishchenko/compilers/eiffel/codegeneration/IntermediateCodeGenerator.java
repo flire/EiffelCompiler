@@ -118,6 +118,29 @@ public class IntermediateCodeGenerator {
 			throw new IllegalArgumentException("Expected variable in inspect part");
 		}
 	}
+	
+	public InstructionSequence createLoop(ExpressionSequence exitCondition, InstructionSequence body) throws IllegalArgumentException {
+		Label loopStartLabel = labelPool.getLabel();
+		exitCondition.instructions.get(0).setLabel(loopStartLabel);
+		body.addInstruction(new Jump(Operation.GOTO, loopStartLabel));
+
+		if (exitCondition.result instanceof Variable) {
+			Jump exitJump = new Conditional(Operation.IF, (Variable) exitCondition.result);
+			exitCondition.instructions.add(exitJump);
+			exitCondition.longJumps.add(exitJump);
+		} else if (exitCondition.result instanceof BoolConstant) {
+			if (((BoolConstant)exitCondition.result).value) {
+				Jump exitJump = new Jump(Operation.GOTO);
+				exitCondition.instructions.add(exitJump);
+				exitCondition.longJumps.add(exitJump);
+			}
+		} else {
+			throw new IllegalArgumentException("Expected boolean expression or constant as a loop exit condition");
+		}
+		InstructionSequence result = exitCondition.append(body);
+		result.moveLongJumps();
+		return result;
+	}
 
 	private VariablesPool variablePool = new VariablesPool();
 	LabelsPool labelPool = new LabelsPool();

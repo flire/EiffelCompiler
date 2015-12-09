@@ -1,0 +1,25 @@
+a := 12 * 4 * 8 + 6 * 4
+x := 1 - 2 - 3
+b := not True
+c := 2.44
+e := False and then True
+f := False implies True
+d := "Hey!"
+if False then
+    g := 1
+elseif True then
+    g := 2
+else
+    g := 3
+end
+inspect a
+when 30 then
+    a := 2
+when 40 then
+    a := 2 + 7
+end
+from a := 1
+until a > 10
+loop
+    a := a+1
+end

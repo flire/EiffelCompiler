@@ -42,6 +42,11 @@
 %type <InstructionSequence> Then_part
 %type <InstructionSequence> Else_part
 
+%type <InstructionSequence> Loop
+%type <InstructionSequence> Initialization
+%type <ExpressionSequence> Exit_condition
+%type <InstructionSequence> Loop_body
+
 %type <ExpressionSequence> Boolean_expression
 
 %type <Variable> Variable /* targets id */
@@ -79,6 +84,10 @@
 %token INSPECT
 %token WHEN
 
+%token FROM
+%token UNTIL
+%token LOOP
+
 %token INTERVAL
 %token COMMA
 
@@ -110,7 +119,8 @@ OPTIONAL_SEMICOLON:
 Instruction:
     Assignment { $$ = $1; }
     | Conditional { $$ = $1; }
-    | Multibranch
+    | Multibranch { $$ = $1; }
+    | Loop {$$ = $1; }
 ;
     
 Assignment:
@@ -156,6 +166,7 @@ Operator_expression :
 
 Local:
     Variable { $$ = generator.createConstantExpression($1); }
+;
     
 Special_expression:
     Manifest_constant { $$ = generator.createConstantExpression($1); }
@@ -243,5 +254,21 @@ Choice :
 
 Constant_interval :
     Constant INTERVAL Constant { $$ = new WhenInterval($1, $3);}
+;
+
+Loop :
+    Initialization Exit_condition Loop_body END { $$ = $1.append(generator.createLoop($2, $3));}
+;
+
+Initialization :
+    FROM Compound { $$ = $2; }
+;
+
+Exit_condition :
+    UNTIL Boolean_expression { $$ = $2; }
+;
+
+Loop_body :
+    LOOP Compound {$$ = $2; }
 ;
 %%

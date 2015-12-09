@@ -76,6 +76,10 @@ RealLiteral = {DecIntegerLiteral}?"."{DecIntegerLiteral} | {DecIntegerLiteral}".
   "inspect"                      { return Eiffel.Lexer.INSPECT; }
   "when"                         { return Eiffel.Lexer.WHEN; }
   
+  "from"                         { return Eiffel.Lexer.FROM; }
+  "until"                        { return Eiffel.Lexer.UNTIL; }
+  "loop"                         { return Eiffel.Lexer.LOOP; }
+  
   ".."                           { return Eiffel.Lexer.INTERVAL; }
   ","                            { return Eiffel.Lexer.COMMA; }
 
