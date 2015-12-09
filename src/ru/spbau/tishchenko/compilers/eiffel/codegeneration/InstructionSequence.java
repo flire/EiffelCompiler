@@ -6,45 +6,65 @@ import ru.spbau.tishchenko.compilers.eiffel.codegeneration.instructions.Jump;
 
 public class InstructionSequence {
 	protected ArrayList<IntermediateInstruction> instructions;
-	protected ArrayList<Jump> instructionsToResolveWithLabel;
+	protected ArrayList<Jump> shortJumps;
+	public ArrayList<Jump> longJumps;
 
 	public InstructionSequence(InstructionSequence code) {
 		instructions = new ArrayList<>(code.instructions);
-		instructionsToResolveWithLabel = new ArrayList<>(code.instructionsToResolveWithLabel);
+		shortJumps = new ArrayList<>(code.shortJumps);
+		longJumps = new ArrayList<>(code.longJumps);
 	}
 	
 	public InstructionSequence() {
 		instructions = new ArrayList<>();
-		instructionsToResolveWithLabel = new ArrayList<>();
+		shortJumps = new ArrayList<>();
+		longJumps = new ArrayList<>();
 	}
 	
-	void resolveLabels(Label label) {
-		for (Jump jump: instructionsToResolveWithLabel) {
+	void resolveShortJumps(Label label) {
+		for (Jump jump: shortJumps) {
 			jump.setJumpLabel(label);
 		}
-		instructionsToResolveWithLabel.clear();
+		shortJumps.clear();
+	}
+	
+	public void moveLongJumps() {
+		shortJumps.addAll(longJumps);
+		longJumps.clear();
 	}
 	
 	public InstructionSequence append(InstructionSequence other) {
 		if (isLabelAfterNeeded()) {
 			Label label = IntermediateCodeGenerator.getInstance().labelPool.getLabel();
-			resolveLabels(label);
+			resolveShortJumps(label);
 			other.instructions.get(0).setLabel(label);
 		}
 		if (other.isLabelAfterNeeded()) {
-			instructionsToResolveWithLabel.addAll(other.instructionsToResolveWithLabel);
+			shortJumps.addAll(other.shortJumps);
 		}
 		instructions.addAll(other.instructions);
+		longJumps.addAll(other.longJumps);
 		return this;
+	}
+	
+	public void addInstruction(IntermediateInstruction instruction) {
+		instructions.add(instruction);
+	}
+	
+	public void appendWithoutResolving(InstructionSequence code) {
+		instructions.addAll(code.instructions);
+		shortJumps.addAll(code.shortJumps);
+		longJumps.addAll(code.longJumps);
 	}
 	
 	public InstructionSequence insertPreceedingCode(InstructionSequence preceeding) {
 		if (preceeding.isLabelAfterNeeded()) {
 			Label label = IntermediateCodeGenerator.getInstance().labelPool.getLabel();
-			preceeding.resolveLabels(label);
+			preceeding.resolveShortJumps(label);
 			instructions.get(0).setLabel(label);
 		}
 		instructions.addAll(0, preceeding.instructions);
+		longJumps.addAll(preceeding.longJumps);
 		return this;
 	}
 	
@@ -53,6 +73,6 @@ public class InstructionSequence {
 	}
 
 	public boolean isLabelAfterNeeded() {
-		return !instructionsToResolveWithLabel.isEmpty();
+		return !shortJumps.isEmpty();
 	}
 }

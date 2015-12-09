@@ -72,6 +72,12 @@ RealLiteral = {DecIntegerLiteral}?"."{DecIntegerLiteral} | {DecIntegerLiteral}".
   "else"                         { return Eiffel.Lexer.ELSE; }
   "elseif"                       { return Eiffel.Lexer.ELSEIF; }
   "end"                          { return Eiffel.Lexer.END; }
+  
+  "inspect"                      { return Eiffel.Lexer.INSPECT; }
+  "when"                         { return Eiffel.Lexer.WHEN; }
+  
+  ".."                           { return Eiffel.Lexer.INTERVAL; }
+  ","                            { return Eiffel.Lexer.COMMA; }
 
   /* arithmetic operators */
   ":="                           { return Eiffel.Lexer.ASSIGN; }
@@ -109,7 +115,7 @@ RealLiteral = {DecIntegerLiteral}?"."{DecIntegerLiteral} | {DecIntegerLiteral}".
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
   {LineTerminator}               { /*return Eiffel.Lexer.LINE_TERMINATOR;*/ }
-  ";"                            { return Eiffel.Lexer.LINE_TERMINATOR; }
+  ";"                            { return Eiffel.Lexer.SEMICOLON; }
   
 }
 

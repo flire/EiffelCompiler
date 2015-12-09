@@ -5,6 +5,16 @@ import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Variable;
 public class StubVariable extends Variable {
 	public StubVariable() {
 		super(PLACEHOLDER);
+		this.effectiveVar = null;
+	}
+	
+	private StubVariable(Variable effective) {
+		super(PLACEHOLDER);
+		this.effectiveVar = effective;
+	}
+	
+	protected StubVariable(StubVariable other) {
+		this(other.effectiveVar);
 	}
 	
 	@Override
@@ -17,6 +27,10 @@ public class StubVariable extends Variable {
 	
 	public void setEffectiveVariable(Variable variable) {
 		effectiveVar = variable;
+	}
+	
+	protected Variable getEffectiveVar() {
+		return effectiveVar;
 	}
 	
 	private Variable effectiveVar = null;

@@ -10,13 +10,11 @@ abstract public class OperatorStub extends InstructionSequence {
 	OperatorStub() {
 		resultPlaceholder = new StubVariable();
 	}
-
-	protected void addInstruction(IntermediateInstruction instruction) {
-		instructions.add(instruction);
-	}
 	
 	protected void addStubJump(Jump jump) {
-		instructionsToResolveWithLabel.add(jump);
-		addInstruction(jump);
+		if (jump != null) {
+			shortJumps.add(jump);
+			addInstruction(jump);
+		}
 	}
 }

@@ -4,13 +4,17 @@
 %define public
 %define package ru.spbau.tishchenko.compilers.eiffel.parser
 %code imports {
+    import java.util.ArrayList;
+    import java.util.Arrays;
     import ru.spbau.tishchenko.compilers.eiffel.codegeneration.*;
     import ru.spbau.tishchenko.compilers.eiffel.language.Operator;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.OperatorStub;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.ExpressionStub;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.UnaryStub;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.BinaryStub;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.*;
     import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Variable;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Symbol;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.StringConstant;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.BoolConstant;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntegerConstant;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.RealConstant;
 }
 
 /* Bison Declarations */
@@ -23,16 +27,12 @@
 
 %token ASSIGN
 
-%token MOD
-
-%token LINE_TERMINATOR
-
 %token <String> IDENTIFIER
 
-%type <Integer> Integer_constant
-%type <Double> Real_constant
-%type <String> Manifest_string
-%type <Boolean> Boolean_constant
+%type <IntegerConstant> Integer_constant
+%type <RealConstant> Real_constant
+%type <StringConstant> Manifest_string
+%type <BoolConstant> Boolean_constant
 
 %type <InstructionSequence> Assignment
 %type <InstructionSequence> Instruction
@@ -49,17 +49,25 @@
 %type <ExpressionStub> Basic_expression
 %type <ExpressionStub> Special_expression
 %type <ExpressionStub> Operator_expression
-%type <ExpressionStub> Unary_expression
-%type <ExpressionStub> Binary_expression
-%type <Object> Manifest_constant
-%type <Object> Manifest_value
-%type <Operator> Binary
-%type <Operator> Unary
+%type <ExpressionStub> Local
+%type <Symbol> Constant
+%type <Symbol> Manifest_constant
+%type <Symbol> Manifest_value
+
+%type <WhenInterval> Constant_interval
+%type <WhenCondition> Choice 
+%type <InstructionSequence> Multibranch
+%type <SingleVariableStub> When_part_list
+%type <SingleVariableStub> When_part
+%type <ArrayList<WhenCondition>> Choices
 
 %nonassoc EQ LEQ GEQ GT LT /* comparison            */
-%left NOT AND OR XOR IMPLIES
-%left MINUS PLUS
-%left MULT RDIV IDIV
+%left OR OR_ELSE XOR IMPLIES
+%left AND AND_THEN
+%left NOT
+%left MINUS PLUS /* 1- 2 -3 */
+%left MULT RDIV IDIV MOD
+%left UMINUS UPLUS
 %left POW    /* exponentiation        */
 
 %token IF
@@ -68,19 +76,16 @@
 %token ELSE
 %token END
 
+%token INSPECT
+%token WHEN
+
+%token INTERVAL
+%token COMMA
+
+%token SEMICOLON
+
 %code {
-    private int const_counter = 0;
-    private int expr_counter = 0;
-    
     private IntermediateCodeGenerator generator = IntermediateCodeGenerator.getInstance();
-    
-    private String getLocalVar() {
-        return "e" + Integer.toString(expr_counter++);
-    }
-    
-    private String getStaticVar() {
-        return "s" + Integer.toString(const_counter++);
-    }
 }
 
 /* Grammar follows */
@@ -93,17 +98,23 @@ Internal :
 ;
 
 Compound:
-    Instruction LINE_TERMINATOR { $$ = $1; }
-    | Instruction LINE_TERMINATOR Compound { $$ = $1.append($3); }
+    Instruction OPTIONAL_SEMICOLON { $$ = $1; }
+    | Compound OPTIONAL_SEMICOLON Instruction { $$ = $1.append($3); }
+;
+
+OPTIONAL_SEMICOLON:
+    /*empty*/
+    | SEMICOLON
 ;
     
 Instruction:
     Assignment { $$ = $1; }
     | Conditional { $$ = $1; }
+    | Multibranch
 ;
     
 Assignment:
-    Variable ASSIGN Expression { $$ = $3.setResult($1); }
+    Variable ASSIGN Expression { $$ = $3.assignTo($1); }
 ;
     
 Variable:
@@ -117,61 +128,41 @@ Expression:
     
 Basic_expression:
     Operator_expression { $$ = $1; }
+    | Local { $$ = $1; }
 ;
     
 Operator_expression :
-    Unary_expression { $$ = $1; }
-    | Binary_expression { $$ = $1; }
-;
-    
-Unary_expression:
-    Unary Expression { ExpressionSequence expr = generator.generateExpression($2);
-                       Variable arg = expr.result;
-                       $$ = ((UnaryStub)$1.getStub())
-                       .setArgument(arg)
-                       .insertPreceedingCode(expr); }
+    NOT Expression { $$ = Operator.NOT.getStub($2);}
+    | MINUS Expression %prec UMINUS { $$ = Operator.NEG.getStub($2);}
+    | PLUS Expression %prec UPLUS { $$ = $2; }
+    | Expression PLUS Expression { $$ = Operator.PLUS.getStub($1, $3); }
+    | Expression MINUS Expression { $$ = Operator.MINUS.getStub($1, $3); }
+    | Expression MULT Expression { $$ = Operator.MULT.getStub($1, $3); }
+    | Expression RDIV Expression { $$ = Operator.RDIV.getStub($1, $3); }
+    | Expression IDIV Expression { $$ = Operator.IDIV.getStub($1, $3); }
+    | Expression MOD Expression { $$ = Operator.MOD.getStub($1, $3); }
+    | Expression EQ Expression { $$ = Operator.EQ.getStub($1, $3); }
+    | Expression LT Expression { $$ = Operator.LT.getStub($1, $3); }
+    | Expression GT Expression { $$ = Operator.GT.getStub($1, $3); }
+    | Expression GEQ Expression { $$ = Operator.GEQ.getStub($1, $3); }
+    | Expression LEQ Expression { $$ = Operator.LEQ.getStub($1, $3); }
+    | Expression AND Expression { $$ = Operator.AND.getStub($1, $3); }
+    | Expression OR Expression { $$ = Operator.OR.getStub($1, $3); }
+    | Expression XOR Expression { $$ = Operator.XOR.getStub($1, $3); }
+    | Expression IMPLIES Expression { $$ = Operator.IMPLIES.getStub($1, $3); }
+    | Expression OR ELSE Expression { $$ = Operator.ORELSE.getStub($1, $4); }
+    | Expression AND THEN Expression { $$ = Operator.ANDTHEN.getStub($1, $4); }
 ;
 
-Binary_expression:
-    Expression Binary Expression { ExpressionSequence expr1 = generator.generateExpression($1);
-                                   Variable arg1 = expr1.result;
-                                   ExpressionSequence expr2 = generator.generateExpression($3);
-                                   Variable arg2 = expr2.result;
-                                   $$ = ((BinaryStub)$2.getStub())
-                                   .setArguments(arg1, arg2)
-                                   .insertPreceedingCode(expr1.append(expr2)); }
-;
-    
-Unary:
-    NOT { $$ = Operator.NOT; }
-    | MINUS { $$ = Operator.NEG; }
-    | PLUS { $$ = Operator.UNARY_PLUS; }
-;
-    
-Binary:
-    PLUS { $$ = Operator.PLUS; }
-    | MINUS { $$ = Operator.MINUS; }
-    | MULT { $$ = Operator.MULT; }
-    | RDIV { $$ = Operator.RDIV; }
-    | IDIV { $$ = Operator.IDIV; }
-    | MOD { $$ = Operator.MOD; }
-    /*| POW { $$ = Operator.ADD; }*/
-    | EQ { $$ = Operator.EQ; }
-    | GT { $$ = Operator.GT; }
-    | LT { $$ = Operator.LT; }
-    | GEQ { $$ = Operator.GEQ; }
-    | LEQ { $$ = Operator.LEQ; }
-    | AND { $$ = Operator.AND; }
-    | OR { $$ = Operator.OR; }
-    | XOR { $$ = Operator.XOR; }
-    | IMPLIES { $$ = Operator.IMPLIES; }
-    | OR ELSE { $$ = Operator.ORELSE; }
-    | AND THEN { $$ = Operator.ANDTHEN; }
-;
+Local:
+    Variable { $$ = generator.createConstantExpression($1); }
     
 Special_expression:
-    Manifest_constant { $$ = generator.bindConstant($1); }
+    Manifest_constant { $$ = generator.createConstantExpression($1); }
 ;
+
+Constant:
+    Manifest_constant { $$ = $1; }
     
 Manifest_constant:
     Manifest_value { $$ = $1; }
@@ -185,25 +176,25 @@ Manifest_value:
 ;
     
 Boolean_constant:
-    TRUE { $$ = $1; }
-    | FALSE { $$ = $1; }
+    TRUE { $$ = new BoolConstant($1); }
+    | FALSE { $$ = new BoolConstant($1); }
 ;
     
 Integer_constant:
-    INTEGER_LITERAL { $$ = $1; }
+    INTEGER_LITERAL { $$ = new IntegerConstant($1); }
 ;
     
 Real_constant:
-    REAL_LITERAL { $$ = $1; }
+    REAL_LITERAL { $$ = new RealConstant($1); }
 ;
     
 Manifest_string:
-    STRING_LITERAL { $$ = $1; }
+    STRING_LITERAL { $$ = generator.createStringConstant($1); }
 ;
 
 Conditional :
-    IF Then_part_list Else_part END { $$ = $2.append($3); }
-    | IF Then_part_list END { $$ = $2; }
+    IF Then_part_list Else_part END { $2.moveLongJumps(); $$ = $2.append($3); }
+    | IF Then_part_list END { $2.moveLongJumps(); $$ = $2; }
 ;
 
 Then_part_list :
@@ -223,6 +214,34 @@ Else_part :
 
 Boolean_expression :
     Basic_expression { $$ = generator.generateExpression($1); }
-    | Boolean_constant { $$ = generator.generateExpression(generator.bindConstant($1)); }
+    | Boolean_constant { $$ = generator.createConstantExpression($1).getExpression(); }
+;
+
+Multibranch :
+    INSPECT Expression When_part_list Else_part END { $$ = generator.createInspect($2, $3, $4); }
+    | INSPECT Expression When_part_list END { $$ = generator.createInspect($2, $3, null); }
+;
+
+When_part_list :
+    When_part_list When_part { $1.append($2); $$ = $1; }
+    | When_part { $$ = $1; }
+;
+
+When_part :
+    WHEN Choices THEN Compound { $$ = generator.wrapWithWhenClause($2, $4); }
+;
+
+Choices :
+    Choices COMMA Choice { $1.add($3); $$ = $1; }
+    | Choice { $$ = new ArrayList<WhenCondition>(Arrays.asList($1)); }
+;
+
+Choice :
+    Constant { $$ = new WhenConstant($1); }
+    | Constant_interval { $$ = $1; }
+;
+
+Constant_interval :
+    Constant INTERVAL Constant { $$ = new WhenInterval($1, $3);}
 ;
 %%

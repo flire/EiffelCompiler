@@ -1,8 +1,9 @@
 package ru.spbau.tishchenko.compilers.eiffel.language;
 
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntermediateInstruction.Operation;
+import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Symbol;
 import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.OperatorStubFactory;
-import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.OperatorStub;
+import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.ExpressionStub;
 import ru.spbau.tishchenko.compilers.eiffel.language.BinaryOperator;
 
 public abstract class Operator {
@@ -11,52 +12,51 @@ public abstract class Operator {
 	public Operator(Operation operation) {
 		this.operation = operation;
 	}
-	public abstract OperatorStub getStub();
 	
-	public final static Operator PLUS = new BinaryOperator(Operation.ADD);
-	public final static Operator MINUS = new BinaryOperator(Operation.SUB);
-	public final static Operator MULT = new BinaryOperator(Operation.MUL);
-	public final static Operator IDIV = new BinaryOperator(Operation.DIV);
-	public final static Operator RDIV = new BinaryOperator(Operation.RDIV);
-	public final static Operator MOD = new BinaryOperator(Operation.MOD);
+	public final static BinaryOperator PLUS = new BinaryOperator(Operation.ADD);
+	public final static BinaryOperator MINUS = new BinaryOperator(Operation.SUB);
+	public final static BinaryOperator MULT = new BinaryOperator(Operation.MUL);
+	public final static BinaryOperator IDIV = new BinaryOperator(Operation.DIV);
+	public final static BinaryOperator RDIV = new BinaryOperator(Operation.RDIV);
+	public final static BinaryOperator MOD = new BinaryOperator(Operation.MOD);
 	
-	public final static Operator EQ = new BinaryOperator(Operation.EQ);
-	public final static Operator GT = new BinaryOperator(Operation.GT);
-	public final static Operator LT = new BinaryOperator(Operation.LT);
-	public final static Operator GEQ = new BinaryOperator(Operation.GEQ);
-	public final static Operator LEQ = new BinaryOperator(Operation.LEQ);
+	public final static BinaryOperator EQ = new BinaryOperator(Operation.EQ);
+	public final static BinaryOperator GT = new BinaryOperator(Operation.GT);
+	public final static BinaryOperator LT = new BinaryOperator(Operation.LT);
+	public final static BinaryOperator GEQ = new BinaryOperator(Operation.GEQ);
+	public final static BinaryOperator LEQ = new BinaryOperator(Operation.LEQ);
 	
-	public final static Operator AND = new BinaryOperator(Operation.AND);
-	public final static Operator OR = new BinaryOperator(Operation.OR);
-	public final static Operator XOR = new BinaryOperator(Operation.XOR);
+	public final static BinaryOperator AND = new BinaryOperator(Operation.AND);
+	public final static BinaryOperator OR = new BinaryOperator(Operation.OR);
+	public final static BinaryOperator XOR = new BinaryOperator(Operation.XOR);
 	
-	public final static Operator ANDTHEN = new BinaryOperator.Special(Operation.AND) {
+	public final static BinaryOperator ANDTHEN = new BinaryOperator.Special(Operation.AND) {
 		@Override
-		public OperatorStub getStub() {
-			return OperatorStubFactory.getAndThenOperation();
+		public ExpressionStub getStub(Symbol arg1, Symbol arg2) {
+			return OperatorStubFactory.getAndThenOperation(arg1, arg2);
 		}
 	};
-	public final static Operator ORELSE = new BinaryOperator.Special(Operation.OR) {
+	public final static BinaryOperator ORELSE = new BinaryOperator.Special(Operation.OR) {
 		@Override
-		public OperatorStub getStub() {
-			return OperatorStubFactory.getOrElseOperation();
+		public ExpressionStub getStub(Symbol arg1, Symbol arg2) {
+			return OperatorStubFactory.getOrElseOperation(arg1, arg2);
 		}
 	};
 	
-	public final static Operator IMPLIES = new BinaryOperator.Special(Operation.OR) {
+	public final static BinaryOperator IMPLIES = new BinaryOperator.Special(Operation.OR) {
 		@Override
-		public OperatorStub getStub() {
-			return OperatorStubFactory.getImpliesOperation();
+		public ExpressionStub getStub(Symbol arg1, Symbol arg2) {
+			return OperatorStubFactory.getImpliesOperation(arg1, arg2);
 		}
 		
 	};
 	
-	public final static Operator NEG = new UnaryOperator(Operation.NEG);
-	public final static Operator NOT = new UnaryOperator(Operation.NOT);
-	public final static Operator UNARY_PLUS = new UnaryOperator.Special(Operation.ADD) {
+	public final static UnaryOperator NEG = new UnaryOperator(Operation.NEG);
+	public final static UnaryOperator NOT = new UnaryOperator(Operation.NOT);
+	public final static UnaryOperator UNARY_PLUS = new UnaryOperator.Special(Operation.ADD) {
 		@Override
-		public OperatorStub getStub() {
-			return OperatorStubFactory.getUnaryPlusStub();
+		public ExpressionStub getStub(Symbol arg1) {
+			return OperatorStubFactory.getUnaryPlusStub(arg1);
 		}
 	};
 }

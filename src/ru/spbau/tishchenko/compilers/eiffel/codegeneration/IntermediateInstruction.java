@@ -31,6 +31,14 @@ public abstract class IntermediateInstruction {
 		
 		IF,
 		IFFALSE,
+		
+		IFEQ,
+		IFNEQ,
+		IFGREATER,
+		IFLESS,
+		IFGEQ,
+		IFLEQ,
+		
 		GOTO
 	}
 

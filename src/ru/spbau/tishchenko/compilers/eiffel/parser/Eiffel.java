@@ -39,15 +39,19 @@ package ru.spbau.tishchenko.compilers.eiffel.parser;
 /* "%code imports" blocks.  */
 /* "Eiffel.y":6  */ /* lalr1.java:93  */
 
+    import java.util.ArrayList;
+    import java.util.Arrays;
     import ru.spbau.tishchenko.compilers.eiffel.codegeneration.*;
     import ru.spbau.tishchenko.compilers.eiffel.language.Operator;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.OperatorStub;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.ExpressionStub;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.UnaryStub;
-    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.BinaryStub;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.stubs.*;
     import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Variable;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.Symbol;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.StringConstant;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.BoolConstant;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.IntegerConstant;
+    import ru.spbau.tishchenko.compilers.eiffel.codegeneration.RealConstant;
 
-/* "../src/ru/spbau/tishchenko/compilers/eiffel/parser/Eiffel.java":51  */ /* lalr1.java:93  */
+/* "../src/ru/spbau/tishchenko/compilers/eiffel/parser/Eiffel.java":55  */ /* lalr1.java:93  */
 
 /**
  * A Bison parser, automatically generated from <tt>Eiffel.y</tt>.
@@ -90,31 +94,31 @@ public class Eiffel
     /** Token number,to be returned by the scanner.  */
     static final int ASSIGN = 263;
     /** Token number,to be returned by the scanner.  */
-    static final int MOD = 264;
+    static final int IDENTIFIER = 264;
     /** Token number,to be returned by the scanner.  */
-    static final int LINE_TERMINATOR = 265;
+    static final int EQ = 265;
     /** Token number,to be returned by the scanner.  */
-    static final int IDENTIFIER = 266;
+    static final int LEQ = 266;
     /** Token number,to be returned by the scanner.  */
-    static final int EQ = 267;
+    static final int GEQ = 267;
     /** Token number,to be returned by the scanner.  */
-    static final int LEQ = 268;
+    static final int GT = 268;
     /** Token number,to be returned by the scanner.  */
-    static final int GEQ = 269;
+    static final int LT = 269;
     /** Token number,to be returned by the scanner.  */
-    static final int GT = 270;
+    static final int OR = 270;
     /** Token number,to be returned by the scanner.  */
-    static final int LT = 271;
+    static final int OR_ELSE = 271;
     /** Token number,to be returned by the scanner.  */
-    static final int NOT = 272;
+    static final int XOR = 272;
     /** Token number,to be returned by the scanner.  */
-    static final int AND = 273;
+    static final int IMPLIES = 273;
     /** Token number,to be returned by the scanner.  */
-    static final int OR = 274;
+    static final int AND = 274;
     /** Token number,to be returned by the scanner.  */
-    static final int XOR = 275;
+    static final int AND_THEN = 275;
     /** Token number,to be returned by the scanner.  */
-    static final int IMPLIES = 276;
+    static final int NOT = 276;
     /** Token number,to be returned by the scanner.  */
     static final int MINUS = 277;
     /** Token number,to be returned by the scanner.  */
@@ -126,17 +130,33 @@ public class Eiffel
     /** Token number,to be returned by the scanner.  */
     static final int IDIV = 281;
     /** Token number,to be returned by the scanner.  */
-    static final int POW = 282;
+    static final int MOD = 282;
     /** Token number,to be returned by the scanner.  */
-    static final int IF = 283;
+    static final int UMINUS = 283;
     /** Token number,to be returned by the scanner.  */
-    static final int THEN = 284;
+    static final int UPLUS = 284;
     /** Token number,to be returned by the scanner.  */
-    static final int ELSEIF = 285;
+    static final int POW = 285;
     /** Token number,to be returned by the scanner.  */
-    static final int ELSE = 286;
+    static final int IF = 286;
     /** Token number,to be returned by the scanner.  */
-    static final int END = 287;
+    static final int THEN = 287;
+    /** Token number,to be returned by the scanner.  */
+    static final int ELSEIF = 288;
+    /** Token number,to be returned by the scanner.  */
+    static final int ELSE = 289;
+    /** Token number,to be returned by the scanner.  */
+    static final int END = 290;
+    /** Token number,to be returned by the scanner.  */
+    static final int INSPECT = 291;
+    /** Token number,to be returned by the scanner.  */
+    static final int WHEN = 292;
+    /** Token number,to be returned by the scanner.  */
+    static final int INTERVAL = 293;
+    /** Token number,to be returned by the scanner.  */
+    static final int COMMA = 294;
+    /** Token number,to be returned by the scanner.  */
+    static final int SEMICOLON = 295;
 
 
     
@@ -374,389 +394,442 @@ public class Eiffel
       {
           case 3:
   if (yyn == 3)
-    /* "Eiffel.y":92  */ /* lalr1.java:489  */
+    /* "Eiffel.y":97  */ /* lalr1.java:489  */
     { generator.setCode(((InstructionSequence)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 4:
   if (yyn == 4)
-    /* "Eiffel.y":96  */ /* lalr1.java:489  */
+    /* "Eiffel.y":101  */ /* lalr1.java:489  */
     { yyval = ((InstructionSequence)(yystack.valueAt (2-(1)))); };
   break;
     
 
   case 5:
   if (yyn == 5)
-    /* "Eiffel.y":97  */ /* lalr1.java:489  */
-    { yyval = ((InstructionSequence)(yystack.valueAt (3-(1)))).append(((InstructionSequence)(yystack.valueAt (3-(3))))); };
-  break;
-    
-
-  case 6:
-  if (yyn == 6)
-    /* "Eiffel.y":101  */ /* lalr1.java:489  */
-    { yyval = ((InstructionSequence)(yystack.valueAt (1-(1)))); };
-  break;
-    
-
-  case 7:
-  if (yyn == 7)
     /* "Eiffel.y":102  */ /* lalr1.java:489  */
-    { yyval = ((InstructionSequence)(yystack.valueAt (1-(1)))); };
+    { yyval = ((InstructionSequence)(yystack.valueAt (3-(1)))).append(((InstructionSequence)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 8:
   if (yyn == 8)
-    /* "Eiffel.y":106  */ /* lalr1.java:489  */
-    { yyval = ((ExpressionStub)(yystack.valueAt (3-(3)))).setResult(((Variable)(yystack.valueAt (3-(1))))); };
+    /* "Eiffel.y":111  */ /* lalr1.java:489  */
+    { yyval = ((InstructionSequence)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 9:
   if (yyn == 9)
-    /* "Eiffel.y":110  */ /* lalr1.java:489  */
-    { yyval = new Variable(((String)(yystack.valueAt (1-(1))))); };
-  break;
-    
-
-  case 10:
-  if (yyn == 10)
-    /* "Eiffel.y":114  */ /* lalr1.java:489  */
-    { yyval = ((ExpressionStub)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":112  */ /* lalr1.java:489  */
+    { yyval = ((InstructionSequence)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 11:
   if (yyn == 11)
-    /* "Eiffel.y":115  */ /* lalr1.java:489  */
-    { yyval = ((ExpressionStub)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":117  */ /* lalr1.java:489  */
+    { yyval = ((ExpressionStub)(yystack.valueAt (3-(3)))).assignTo(((Variable)(yystack.valueAt (3-(1))))); };
   break;
     
 
   case 12:
   if (yyn == 12)
-    /* "Eiffel.y":119  */ /* lalr1.java:489  */
-    { yyval = ((ExpressionStub)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":121  */ /* lalr1.java:489  */
+    { yyval = new Variable(((String)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 13:
   if (yyn == 13)
-    /* "Eiffel.y":123  */ /* lalr1.java:489  */
+    /* "Eiffel.y":125  */ /* lalr1.java:489  */
     { yyval = ((ExpressionStub)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 14:
   if (yyn == 14)
-    /* "Eiffel.y":124  */ /* lalr1.java:489  */
+    /* "Eiffel.y":126  */ /* lalr1.java:489  */
     { yyval = ((ExpressionStub)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 15:
   if (yyn == 15)
-    /* "Eiffel.y":128  */ /* lalr1.java:489  */
-    { ExpressionSequence expr = generator.generateExpression(((ExpressionStub)(yystack.valueAt (2-(2)))));
-                       Variable arg = expr.result;
-                       yyval = ((UnaryStub)((Operator)(yystack.valueAt (2-(1)))).getStub())
-                       .setArgument(arg)
-                       .insertPreceedingCode(expr); };
+    /* "Eiffel.y":130  */ /* lalr1.java:489  */
+    { yyval = ((ExpressionStub)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 16:
   if (yyn == 16)
-    /* "Eiffel.y":136  */ /* lalr1.java:489  */
-    { ExpressionSequence expr1 = generator.generateExpression(((ExpressionStub)(yystack.valueAt (3-(1)))));
-                                   Variable arg1 = expr1.result;
-                                   ExpressionSequence expr2 = generator.generateExpression(((ExpressionStub)(yystack.valueAt (3-(3)))));
-                                   Variable arg2 = expr2.result;
-                                   yyval = ((BinaryStub)((Operator)(yystack.valueAt (3-(2)))).getStub())
-                                   .setArguments(arg1, arg2)
-                                   .insertPreceedingCode(expr1.append(expr2)); };
+    /* "Eiffel.y":131  */ /* lalr1.java:489  */
+    { yyval = ((ExpressionStub)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 17:
   if (yyn == 17)
-    /* "Eiffel.y":146  */ /* lalr1.java:489  */
-    { yyval = Operator.NOT; };
+    /* "Eiffel.y":135  */ /* lalr1.java:489  */
+    { yyval = Operator.NOT.getStub(((ExpressionStub)(yystack.valueAt (2-(2)))));};
   break;
     
 
   case 18:
   if (yyn == 18)
-    /* "Eiffel.y":147  */ /* lalr1.java:489  */
-    { yyval = Operator.NEG; };
+    /* "Eiffel.y":136  */ /* lalr1.java:489  */
+    { yyval = Operator.NEG.getStub(((ExpressionStub)(yystack.valueAt (2-(2)))));};
   break;
     
 
   case 19:
   if (yyn == 19)
-    /* "Eiffel.y":148  */ /* lalr1.java:489  */
-    { yyval = Operator.UNARY_PLUS; };
+    /* "Eiffel.y":137  */ /* lalr1.java:489  */
+    { yyval = ((ExpressionStub)(yystack.valueAt (2-(2)))); };
   break;
     
 
   case 20:
   if (yyn == 20)
-    /* "Eiffel.y":152  */ /* lalr1.java:489  */
-    { yyval = Operator.PLUS; };
+    /* "Eiffel.y":138  */ /* lalr1.java:489  */
+    { yyval = Operator.PLUS.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 21:
   if (yyn == 21)
-    /* "Eiffel.y":153  */ /* lalr1.java:489  */
-    { yyval = Operator.MINUS; };
+    /* "Eiffel.y":139  */ /* lalr1.java:489  */
+    { yyval = Operator.MINUS.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 22:
   if (yyn == 22)
-    /* "Eiffel.y":154  */ /* lalr1.java:489  */
-    { yyval = Operator.MULT; };
+    /* "Eiffel.y":140  */ /* lalr1.java:489  */
+    { yyval = Operator.MULT.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 23:
   if (yyn == 23)
-    /* "Eiffel.y":155  */ /* lalr1.java:489  */
-    { yyval = Operator.RDIV; };
+    /* "Eiffel.y":141  */ /* lalr1.java:489  */
+    { yyval = Operator.RDIV.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 24:
   if (yyn == 24)
-    /* "Eiffel.y":156  */ /* lalr1.java:489  */
-    { yyval = Operator.IDIV; };
+    /* "Eiffel.y":142  */ /* lalr1.java:489  */
+    { yyval = Operator.IDIV.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 25:
   if (yyn == 25)
-    /* "Eiffel.y":157  */ /* lalr1.java:489  */
-    { yyval = Operator.MOD; };
+    /* "Eiffel.y":143  */ /* lalr1.java:489  */
+    { yyval = Operator.MOD.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 26:
   if (yyn == 26)
-    /* "Eiffel.y":159  */ /* lalr1.java:489  */
-    { yyval = Operator.EQ; };
+    /* "Eiffel.y":144  */ /* lalr1.java:489  */
+    { yyval = Operator.EQ.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 27:
   if (yyn == 27)
-    /* "Eiffel.y":160  */ /* lalr1.java:489  */
-    { yyval = Operator.GT; };
+    /* "Eiffel.y":145  */ /* lalr1.java:489  */
+    { yyval = Operator.LT.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 28:
   if (yyn == 28)
-    /* "Eiffel.y":161  */ /* lalr1.java:489  */
-    { yyval = Operator.LT; };
+    /* "Eiffel.y":146  */ /* lalr1.java:489  */
+    { yyval = Operator.GT.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 29:
   if (yyn == 29)
-    /* "Eiffel.y":162  */ /* lalr1.java:489  */
-    { yyval = Operator.GEQ; };
+    /* "Eiffel.y":147  */ /* lalr1.java:489  */
+    { yyval = Operator.GEQ.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 30:
   if (yyn == 30)
-    /* "Eiffel.y":163  */ /* lalr1.java:489  */
-    { yyval = Operator.LEQ; };
+    /* "Eiffel.y":148  */ /* lalr1.java:489  */
+    { yyval = Operator.LEQ.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 31:
   if (yyn == 31)
-    /* "Eiffel.y":164  */ /* lalr1.java:489  */
-    { yyval = Operator.AND; };
+    /* "Eiffel.y":149  */ /* lalr1.java:489  */
+    { yyval = Operator.AND.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 32:
   if (yyn == 32)
-    /* "Eiffel.y":165  */ /* lalr1.java:489  */
-    { yyval = Operator.OR; };
+    /* "Eiffel.y":150  */ /* lalr1.java:489  */
+    { yyval = Operator.OR.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 33:
   if (yyn == 33)
-    /* "Eiffel.y":166  */ /* lalr1.java:489  */
-    { yyval = Operator.XOR; };
+    /* "Eiffel.y":151  */ /* lalr1.java:489  */
+    { yyval = Operator.XOR.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 34:
   if (yyn == 34)
-    /* "Eiffel.y":167  */ /* lalr1.java:489  */
-    { yyval = Operator.IMPLIES; };
+    /* "Eiffel.y":152  */ /* lalr1.java:489  */
+    { yyval = Operator.IMPLIES.getStub(((ExpressionStub)(yystack.valueAt (3-(1)))), ((ExpressionStub)(yystack.valueAt (3-(3))))); };
   break;
     
 
   case 35:
   if (yyn == 35)
-    /* "Eiffel.y":168  */ /* lalr1.java:489  */
-    { yyval = Operator.ORELSE; };
+    /* "Eiffel.y":153  */ /* lalr1.java:489  */
+    { yyval = Operator.ORELSE.getStub(((ExpressionStub)(yystack.valueAt (4-(1)))), ((ExpressionStub)(yystack.valueAt (4-(4))))); };
   break;
     
 
   case 36:
   if (yyn == 36)
-    /* "Eiffel.y":169  */ /* lalr1.java:489  */
-    { yyval = Operator.ANDTHEN; };
+    /* "Eiffel.y":154  */ /* lalr1.java:489  */
+    { yyval = Operator.ANDTHEN.getStub(((ExpressionStub)(yystack.valueAt (4-(1)))), ((ExpressionStub)(yystack.valueAt (4-(4))))); };
   break;
     
 
   case 37:
   if (yyn == 37)
-    /* "Eiffel.y":173  */ /* lalr1.java:489  */
-    { yyval = generator.bindConstant(((Object)(yystack.valueAt (1-(1))))); };
+    /* "Eiffel.y":158  */ /* lalr1.java:489  */
+    { yyval = generator.createConstantExpression(((Variable)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 38:
   if (yyn == 38)
-    /* "Eiffel.y":177  */ /* lalr1.java:489  */
-    { yyval = ((Object)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":161  */ /* lalr1.java:489  */
+    { yyval = generator.createConstantExpression(((Symbol)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 39:
   if (yyn == 39)
-    /* "Eiffel.y":181  */ /* lalr1.java:489  */
-    { yyval = ((Boolean)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":165  */ /* lalr1.java:489  */
+    { yyval = ((Symbol)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 40:
   if (yyn == 40)
-    /* "Eiffel.y":182  */ /* lalr1.java:489  */
-    { yyval = ((Integer)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":168  */ /* lalr1.java:489  */
+    { yyval = ((Symbol)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 41:
   if (yyn == 41)
-    /* "Eiffel.y":183  */ /* lalr1.java:489  */
-    { yyval = ((Double)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":172  */ /* lalr1.java:489  */
+    { yyval = ((BoolConstant)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 42:
   if (yyn == 42)
-    /* "Eiffel.y":184  */ /* lalr1.java:489  */
-    { yyval = ((String)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":173  */ /* lalr1.java:489  */
+    { yyval = ((IntegerConstant)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 43:
   if (yyn == 43)
-    /* "Eiffel.y":188  */ /* lalr1.java:489  */
-    { yyval = ((Boolean)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":174  */ /* lalr1.java:489  */
+    { yyval = ((RealConstant)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 44:
   if (yyn == 44)
-    /* "Eiffel.y":189  */ /* lalr1.java:489  */
-    { yyval = ((Boolean)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":175  */ /* lalr1.java:489  */
+    { yyval = ((StringConstant)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 45:
   if (yyn == 45)
-    /* "Eiffel.y":193  */ /* lalr1.java:489  */
-    { yyval = ((Integer)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":179  */ /* lalr1.java:489  */
+    { yyval = new BoolConstant(((Boolean)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 46:
   if (yyn == 46)
-    /* "Eiffel.y":197  */ /* lalr1.java:489  */
-    { yyval = ((Double)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":180  */ /* lalr1.java:489  */
+    { yyval = new BoolConstant(((Boolean)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 47:
   if (yyn == 47)
-    /* "Eiffel.y":201  */ /* lalr1.java:489  */
-    { yyval = ((String)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":184  */ /* lalr1.java:489  */
+    { yyval = new IntegerConstant(((Integer)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 48:
   if (yyn == 48)
-    /* "Eiffel.y":205  */ /* lalr1.java:489  */
-    { yyval = ((InstructionSequence)(yystack.valueAt (4-(2)))).append(((InstructionSequence)(yystack.valueAt (4-(3))))); };
+    /* "Eiffel.y":188  */ /* lalr1.java:489  */
+    { yyval = new RealConstant(((Double)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 49:
   if (yyn == 49)
-    /* "Eiffel.y":206  */ /* lalr1.java:489  */
-    { yyval = ((InstructionSequence)(yystack.valueAt (3-(2)))); };
+    /* "Eiffel.y":192  */ /* lalr1.java:489  */
+    { yyval = generator.createStringConstant(((String)(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 50:
   if (yyn == 50)
-    /* "Eiffel.y":210  */ /* lalr1.java:489  */
-    { yyval = ((InstructionSequence)(yystack.valueAt (1-(1)))); };
+    /* "Eiffel.y":196  */ /* lalr1.java:489  */
+    { ((InstructionSequence)(yystack.valueAt (4-(2)))).moveLongJumps(); yyval = ((InstructionSequence)(yystack.valueAt (4-(2)))).append(((InstructionSequence)(yystack.valueAt (4-(3))))); };
   break;
     
 
   case 51:
   if (yyn == 51)
-    /* "Eiffel.y":211  */ /* lalr1.java:489  */
-    { yyval = ((InstructionSequence)(yystack.valueAt (3-(1)))).append(((InstructionSequence)(yystack.valueAt (3-(3))))); };
+    /* "Eiffel.y":197  */ /* lalr1.java:489  */
+    { ((InstructionSequence)(yystack.valueAt (3-(2)))).moveLongJumps(); yyval = ((InstructionSequence)(yystack.valueAt (3-(2)))); };
   break;
     
 
   case 52:
   if (yyn == 52)
-    /* "Eiffel.y":215  */ /* lalr1.java:489  */
+    /* "Eiffel.y":201  */ /* lalr1.java:489  */
+    { yyval = ((InstructionSequence)(yystack.valueAt (1-(1)))); };
+  break;
+    
+
+  case 53:
+  if (yyn == 53)
+    /* "Eiffel.y":202  */ /* lalr1.java:489  */
+    { yyval = ((InstructionSequence)(yystack.valueAt (3-(1)))).append(((InstructionSequence)(yystack.valueAt (3-(3))))); };
+  break;
+    
+
+  case 54:
+  if (yyn == 54)
+    /* "Eiffel.y":206  */ /* lalr1.java:489  */
     { ExpressionSequence expr = ((ExpressionSequence)(yystack.valueAt (3-(1))));
                                        yyval = generator.wrapWithIfClause(expr.result, ((InstructionSequence)(yystack.valueAt (3-(3)))))
                                        .insertPreceedingCode(expr); };
   break;
     
 
-  case 53:
-  if (yyn == 53)
-    /* "Eiffel.y":221  */ /* lalr1.java:489  */
+  case 55:
+  if (yyn == 55)
+    /* "Eiffel.y":212  */ /* lalr1.java:489  */
     { yyval = ((InstructionSequence)(yystack.valueAt (2-(2)))); };
   break;
     
 
-  case 54:
-  if (yyn == 54)
-    /* "Eiffel.y":225  */ /* lalr1.java:489  */
+  case 56:
+  if (yyn == 56)
+    /* "Eiffel.y":216  */ /* lalr1.java:489  */
     { yyval = generator.generateExpression(((ExpressionStub)(yystack.valueAt (1-(1))))); };
   break;
     
 
-  case 55:
-  if (yyn == 55)
+  case 57:
+  if (yyn == 57)
+    /* "Eiffel.y":217  */ /* lalr1.java:489  */
+    { yyval = generator.createConstantExpression(((BoolConstant)(yystack.valueAt (1-(1))))).getExpression(); };
+  break;
+    
+
+  case 58:
+  if (yyn == 58)
+    /* "Eiffel.y":221  */ /* lalr1.java:489  */
+    { yyval = generator.createInspect(((ExpressionStub)(yystack.valueAt (5-(2)))), ((SingleVariableStub)(yystack.valueAt (5-(3)))), ((InstructionSequence)(yystack.valueAt (5-(4))))); };
+  break;
+    
+
+  case 59:
+  if (yyn == 59)
+    /* "Eiffel.y":222  */ /* lalr1.java:489  */
+    { yyval = generator.createInspect(((ExpressionStub)(yystack.valueAt (4-(2)))), ((SingleVariableStub)(yystack.valueAt (4-(3)))), null); };
+  break;
+    
+
+  case 60:
+  if (yyn == 60)
     /* "Eiffel.y":226  */ /* lalr1.java:489  */
-    { yyval = generator.generateExpression(generator.bindConstant(((Boolean)(yystack.valueAt (1-(1)))))); };
+    { ((SingleVariableStub)(yystack.valueAt (2-(1)))).append(((SingleVariableStub)(yystack.valueAt (2-(2))))); yyval = ((SingleVariableStub)(yystack.valueAt (2-(1)))); };
+  break;
+    
+
+  case 61:
+  if (yyn == 61)
+    /* "Eiffel.y":227  */ /* lalr1.java:489  */
+    { yyval = ((SingleVariableStub)(yystack.valueAt (1-(1)))); };
+  break;
+    
+
+  case 62:
+  if (yyn == 62)
+    /* "Eiffel.y":231  */ /* lalr1.java:489  */
+    { yyval = generator.wrapWithWhenClause(((ArrayList<WhenCondition>)(yystack.valueAt (4-(2)))), ((InstructionSequence)(yystack.valueAt (4-(4))))); };
+  break;
+    
+
+  case 63:
+  if (yyn == 63)
+    /* "Eiffel.y":235  */ /* lalr1.java:489  */
+    { ((ArrayList<WhenCondition>)(yystack.valueAt (3-(1)))).add(((WhenCondition)(yystack.valueAt (3-(3))))); yyval = ((ArrayList<WhenCondition>)(yystack.valueAt (3-(1)))); };
+  break;
+    
+
+  case 64:
+  if (yyn == 64)
+    /* "Eiffel.y":236  */ /* lalr1.java:489  */
+    { yyval = new ArrayList<WhenCondition>(Arrays.asList(((WhenCondition)(yystack.valueAt (1-(1)))))); };
+  break;
+    
+
+  case 65:
+  if (yyn == 65)
+    /* "Eiffel.y":240  */ /* lalr1.java:489  */
+    { yyval = new WhenConstant(((Symbol)(yystack.valueAt (1-(1))))); };
+  break;
+    
+
+  case 66:
+  if (yyn == 66)
+    /* "Eiffel.y":241  */ /* lalr1.java:489  */
+    { yyval = ((WhenInterval)(yystack.valueAt (1-(1)))); };
+  break;
+    
+
+  case 67:
+  if (yyn == 67)
+    /* "Eiffel.y":245  */ /* lalr1.java:489  */
+    { yyval = new WhenInterval(((Symbol)(yystack.valueAt (3-(1)))), ((Symbol)(yystack.valueAt (3-(3)))));};
   break;
     
 
 
-/* "../src/ru/spbau/tishchenko/compilers/eiffel/parser/Eiffel.java":760  */ /* lalr1.java:489  */
+/* "../src/ru/spbau/tishchenko/compilers/eiffel/parser/Eiffel.java":833  */ /* lalr1.java:489  */
         default: break;
       }
 
@@ -1063,23 +1136,27 @@ public class Eiffel
     return yyvalue == yytable_ninf_;
   }
 
-  private static final byte yypact_ninf_ = -33;
-  private static final byte yytable_ninf_ = -56;
+  private static final short yypact_ninf_ = -66;
+  private static final byte yytable_ninf_ = -63;
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-  private static final byte yypact_[] = yypact_init();
-  private static final byte[] yypact_init()
+  private static final short yypact_[] = yypact_init();
+  private static final short[] yypact_init()
   {
-    return new byte[]
+    return new short[]
     {
-      -7,   -33,     3,     5,   -33,   -33,     4,   -33,     8,   -33,
-     -33,   -33,   -33,   -33,   -33,   -33,   -33,   -33,    20,   -16,
-     -33,   -33,   -33,     3,   -33,   -33,   -33,   -12,   -33,   -33,
-     -33,   -20,   -11,    -6,   -33,    -7,     3,   -33,   -33,   -33,
-     -33,   -33,   -33,     1,   -13,   -33,   -33,   -33,   -33,   -33,
-     -33,   -33,     3,    20,   -33,   -33,    -7,   -33,   -10,     3,
-      -7,   -33,    20,   -33,   -33,    20,   -33,   -33,   -33,   -33
+      -3,   -66,   119,   119,    14,   -66,    23,   -37,   -66,     7,
+     -66,   -66,   -66,   -66,   -66,   -66,   -66,   119,   119,   119,
+     -66,   133,    10,   -66,   -66,   -66,   -66,   -66,    11,   -66,
+     -66,   -66,   -13,     1,    12,    94,   -66,   -66,   -66,   -66,
+      -3,   -66,   119,   110,   -66,   -66,   119,   119,   119,   119,
+     119,     4,   119,   119,    65,   119,   119,   119,   119,   119,
+     119,    -3,   -66,    25,   119,    -3,    95,    59,   -66,   -66,
+     133,   151,   151,   151,   151,   151,   119,    58,    58,    58,
+     119,   110,   155,   155,   -66,   -66,   -66,   -66,    38,   -66,
+     -66,    -4,    -6,   -66,   -20,   -66,   -66,   -66,    29,   -66,
+     133,   133,    95,    -3,    95,   -66,   -66,    55,   -66
     };
   }
 
@@ -1091,13 +1168,17 @@ public class Eiffel
   {
     return new byte[]
     {
-       0,     9,     0,     0,     2,     3,     0,     6,     0,     7,
-      45,    46,    47,    43,    44,    17,    18,    19,     0,    10,
-      12,    13,    14,     0,    11,    37,    38,    39,    40,    41,
-      42,     0,    50,     0,     1,     4,     0,    25,    26,    30,
-      29,    27,    28,    31,    32,    33,    34,    21,    20,    22,
-      23,    24,     0,    15,    10,    39,     0,    49,     0,     0,
-       0,     5,     8,    36,    35,    16,    53,    48,    51,    52
+       0,    12,     0,     0,     0,     2,     6,     6,     8,     0,
+       9,    10,    47,    48,    49,    45,    46,     0,     0,     0,
+      37,     0,    13,    15,    16,    14,    38,    40,    41,    42,
+      43,    44,     0,    52,     0,     0,    13,    41,     1,     7,
+       0,     4,     0,    17,    18,    19,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    51,     0,     0,     0,     0,     0,    61,     5,
+      11,    26,    30,    29,    28,    27,     0,    32,    33,    34,
+       0,    31,    21,    20,    22,    23,    24,    25,     6,    50,
+      53,     6,    65,    39,     0,    64,    66,    59,     0,    60,
+      35,    36,     0,     0,     0,    58,    67,     6,    63
     };
   }
 
@@ -1107,9 +1188,10 @@ public class Eiffel
   {
     return new byte[]
     {
-     -33,   -33,   -33,   -32,   -33,   -33,   -33,   -21,    -2,   -33,
-     -33,   -33,   -33,   -33,   -33,   -33,   -33,    -1,   -33,   -33,
-     -33,   -33,   -22,   -33,   -33,   -33
+     -66,   -66,   -66,   -41,    28,    36,   -66,     0,    -1,     2,
+     -66,   -66,   -66,   -11,   -65,   -66,     3,   -66,   -66,   -66,
+     -66,    46,   -66,    47,   -66,   -66,   -66,    48,   -66,    26,
+     -66
     };
   }
 
@@ -1119,9 +1201,10 @@ public class Eiffel
   {
     return new byte[]
     {
-      -1,     3,     4,     5,     6,     7,     8,    18,    54,    20,
-      21,    22,    23,    52,    24,    25,    26,    55,    28,    29,
-      30,     9,    31,    32,    58,    33
+      -1,     4,     5,     6,    40,     7,     8,    20,    21,    36,
+      23,    24,    25,    92,    26,    27,    37,    29,    30,    31,
+      10,    32,    33,    63,    34,    11,    67,    68,    94,    95,
+      96
     };
   }
 
@@ -1133,12 +1216,25 @@ public class Eiffel
   {
     return new byte[]
     {
-      19,    27,    53,    61,     1,    34,    10,    11,    12,    13,
-      14,    56,    57,   -54,    35,    62,    36,   -55,    64,    59,
-      15,     2,    67,    60,    66,    16,    17,     0,    69,    37,
-      63,    65,    38,    39,    40,    41,    42,    68,    43,    44,
-      45,    46,    47,    48,    49,    50,    51,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    19,    27
+       9,    93,    35,    39,    22,    28,     1,    12,    13,    14,
+      15,    16,   103,     1,    38,    42,    43,    44,    45,   104,
+      88,    61,    62,    -3,    91,    17,    18,    19,     2,   -54,
+     -54,   -54,   102,     3,    64,    41,    39,    93,    76,    93,
+       9,    70,   -56,   -57,    65,    71,    72,    73,    74,    75,
+      77,    78,    79,    81,    82,    83,    84,    85,    86,    87,
+      89,     9,   107,    39,   105,     9,    22,    28,    12,    13,
+      14,    15,    16,   -55,     1,   100,    69,    54,    39,   101,
+      55,    56,    57,    58,    59,    60,    17,    18,    19,   -62,
+     -62,   106,   -62,    61,    97,    39,    66,    80,    12,    13,
+      14,    15,    16,     9,    46,    47,    48,    49,    50,    51,
+      90,    52,    53,    54,    98,    99,    55,    56,    57,    58,
+      59,    60,    12,    13,    14,    15,    16,     0,     1,     0,
+     108,    66,    55,    56,    57,    58,    59,    60,     0,     0,
+      17,    18,    19,    46,    47,    48,    49,    50,    51,     0,
+      52,    53,    54,     0,     0,    55,    56,    57,    58,    59,
+      60,   -63,   -63,   -63,   -63,   -63,    51,     0,    52,    53,
+      54,     0,     0,    55,    56,    57,    58,    59,    60,    57,
+      58,    59,    60
     };
   }
 
@@ -1147,12 +1243,25 @@ private static final byte yycheck_[] = yycheck_init();
   {
     return new byte[]
     {
-       2,     2,    23,    35,    11,     0,     3,     4,     5,     6,
-       7,    31,    32,    29,    10,    36,     8,    29,    31,    30,
-      17,    28,    32,    29,    56,    22,    23,    -1,    60,     9,
-      29,    52,    12,    13,    14,    15,    16,    59,    18,    19,
-      20,    21,    22,    23,    24,    25,    26,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    59,    59
+       0,    66,     3,    40,     2,     2,     9,     3,     4,     5,
+       6,     7,    32,     9,     0,     8,    17,    18,    19,    39,
+      61,    34,    35,     0,    65,    21,    22,    23,    31,    33,
+      34,    35,    38,    36,    33,     7,    40,   102,    34,   104,
+      40,    42,    32,    32,    32,    46,    47,    48,    49,    50,
+      51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
+      35,    61,   103,    40,    35,    65,    64,    64,     3,     4,
+       5,     6,     7,    35,     9,    76,    40,    19,    40,    80,
+      22,    23,    24,    25,    26,    27,    21,    22,    23,    34,
+      35,   102,    37,    34,    35,    40,    37,    32,     3,     4,
+       5,     6,     7,   103,    10,    11,    12,    13,    14,    15,
+      64,    17,    18,    19,    67,    67,    22,    23,    24,    25,
+      26,    27,     3,     4,     5,     6,     7,    -1,     9,    -1,
+     104,    37,    22,    23,    24,    25,    26,    27,    -1,    -1,
+      21,    22,    23,    10,    11,    12,    13,    14,    15,    -1,
+      17,    18,    19,    -1,    -1,    22,    23,    24,    25,    26,
+      27,    10,    11,    12,    13,    14,    15,    -1,    17,    18,
+      19,    -1,    -1,    22,    23,    24,    25,    26,    27,    24,
+      25,    26,    27
     };
   }
 
@@ -1163,13 +1272,17 @@ private static final byte yycheck_[] = yycheck_init();
   {
     return new byte[]
     {
-       0,    11,    28,    34,    35,    36,    37,    38,    39,    54,
-       3,     4,     5,     6,     7,    17,    22,    23,    40,    41,
-      42,    43,    44,    45,    47,    48,    49,    50,    51,    52,
-      53,    55,    56,    58,     0,    10,     8,     9,    12,    13,
-      14,    15,    16,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    46,    40,    41,    50,    31,    32,    57,    30,
-      29,    36,    40,    29,    31,    40,    36,    32,    55,    36
+       0,     9,    31,    36,    42,    43,    44,    46,    47,    48,
+      61,    66,     3,     4,     5,     6,     7,    21,    22,    23,
+      48,    49,    50,    51,    52,    53,    55,    56,    57,    58,
+      59,    60,    62,    63,    65,    49,    50,    57,     0,    40,
+      45,    45,     8,    49,    49,    49,    10,    11,    12,    13,
+      14,    15,    17,    18,    19,    22,    23,    24,    25,    26,
+      27,    34,    35,    64,    33,    32,    37,    67,    68,    46,
+      49,    49,    49,    49,    49,    49,    34,    49,    49,    49,
+      32,    49,    49,    49,    49,    49,    49,    49,    44,    35,
+      62,    44,    54,    55,    69,    70,    71,    35,    64,    68,
+      49,    49,    38,    32,    39,    35,    54,    44,    70
     };
   }
 
@@ -1179,12 +1292,13 @@ private static final byte yycheck_[] = yycheck_init();
   {
     return new byte[]
     {
-       0,    33,    34,    35,    36,    36,    37,    37,    38,    39,
-      40,    40,    41,    42,    42,    43,    44,    45,    45,    45,
-      46,    46,    46,    46,    46,    46,    46,    46,    46,    46,
-      46,    46,    46,    46,    46,    46,    46,    47,    48,    49,
-      49,    49,    49,    50,    50,    51,    52,    53,    54,    54,
-      55,    55,    56,    57,    58,    58
+       0,    41,    42,    43,    44,    44,    45,    45,    46,    46,
+      46,    47,    48,    49,    49,    50,    50,    51,    51,    51,
+      51,    51,    51,    51,    51,    51,    51,    51,    51,    51,
+      51,    51,    51,    51,    51,    51,    51,    52,    53,    54,
+      55,    56,    56,    56,    56,    57,    57,    58,    59,    60,
+      61,    61,    62,    62,    63,    64,    65,    65,    66,    66,
+      67,    67,    68,    69,    69,    70,    70,    71
     };
   }
 
@@ -1194,12 +1308,13 @@ private static final byte yycheck_[] = yycheck_init();
   {
     return new byte[]
     {
-       0,     2,     1,     1,     2,     3,     1,     1,     3,     1,
-       1,     1,     1,     1,     1,     2,     3,     1,     1,     1,
+       0,     2,     1,     1,     2,     3,     0,     1,     1,     1,
+       1,     3,     1,     1,     1,     1,     1,     2,     2,     2,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     4,     4,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     2,     2,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     4,     3,
-       1,     3,     3,     2,     1,     1
+       4,     3,     1,     3,     3,     2,     1,     1,     5,     4,
+       2,     1,     4,     3,     1,     1,     1,     3
     };
   }
 
@@ -1213,7 +1328,8 @@ private static final byte yycheck_[] = yycheck_init();
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,   287
+     285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
+     295
     };
   }
 
@@ -1225,16 +1341,19 @@ private static final byte yycheck_[] = yycheck_init();
     return new String[]
     {
   "$end", "error", "$undefined", "INTEGER_LITERAL", "REAL_LITERAL",
-  "STRING_LITERAL", "TRUE", "FALSE", "ASSIGN", "MOD", "LINE_TERMINATOR",
-  "IDENTIFIER", "EQ", "LEQ", "GEQ", "GT", "LT", "NOT", "AND", "OR", "XOR",
-  "IMPLIES", "MINUS", "PLUS", "MULT", "RDIV", "IDIV", "POW", "IF", "THEN",
-  "ELSEIF", "ELSE", "END", "$accept", "Effective_routine", "Internal",
-  "Compound", "Instruction", "Assignment", "Variable", "Expression",
-  "Basic_expression", "Operator_expression", "Unary_expression",
-  "Binary_expression", "Unary", "Binary", "Special_expression",
+  "STRING_LITERAL", "TRUE", "FALSE", "ASSIGN", "IDENTIFIER", "EQ", "LEQ",
+  "GEQ", "GT", "LT", "OR", "OR_ELSE", "XOR", "IMPLIES", "AND", "AND_THEN",
+  "NOT", "MINUS", "PLUS", "MULT", "RDIV", "IDIV", "MOD", "UMINUS", "UPLUS",
+  "POW", "IF", "THEN", "ELSEIF", "ELSE", "END", "INSPECT", "WHEN",
+  "INTERVAL", "COMMA", "SEMICOLON", "$accept", "Effective_routine",
+  "Internal", "Compound", "OPTIONAL_SEMICOLON", "Instruction",
+  "Assignment", "Variable", "Expression", "Basic_expression",
+  "Operator_expression", "Local", "Special_expression", "Constant",
   "Manifest_constant", "Manifest_value", "Boolean_constant",
   "Integer_constant", "Real_constant", "Manifest_string", "Conditional",
-  "Then_part_list", "Then_part", "Else_part", "Boolean_expression", null
+  "Then_part_list", "Then_part", "Else_part", "Boolean_expression",
+  "Multibranch", "When_part_list", "When_part", "Choices", "Choice",
+  "Constant_interval", null
     };
   }
 
@@ -1244,12 +1363,13 @@ private static final byte yycheck_[] = yycheck_init();
   {
     return new short[]
     {
-       0,    89,    89,    92,    96,    97,   101,   102,   106,   110,
-     114,   115,   119,   123,   124,   128,   136,   146,   147,   148,
-     152,   153,   154,   155,   156,   157,   159,   160,   161,   162,
-     163,   164,   165,   166,   167,   168,   169,   173,   177,   181,
-     182,   183,   184,   188,   189,   193,   197,   201,   205,   206,
-     210,   211,   215,   221,   225,   226
+       0,    94,    94,    97,   101,   102,   105,   107,   111,   112,
+     113,   117,   121,   125,   126,   130,   131,   135,   136,   137,
+     138,   139,   140,   141,   142,   143,   144,   145,   146,   147,
+     148,   149,   150,   151,   152,   153,   154,   158,   161,   165,
+     168,   172,   173,   174,   175,   179,   180,   184,   188,   192,
+     196,   197,   201,   202,   206,   212,   216,   217,   221,   222,
+     226,   227,   231,   235,   236,   240,   241,   245
     };
   }
 
@@ -1307,7 +1427,8 @@ private static final byte yycheck_[] = yycheck_init();
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40
     };
   }
 
@@ -1319,37 +1440,26 @@ private static final byte yycheck_[] = yycheck_init();
       return yyundef_token_;
   }
 
-  private static final int yylast_ = 58;
-  private static final int yynnts_ = 26;
+  private static final int yylast_ = 182;
+  private static final int yynnts_ = 31;
   private static final int yyempty_ = -2;
-  private static final int yyfinal_ = 34;
+  private static final int yyfinal_ = 38;
   private static final int yyterror_ = 1;
   private static final int yyerrcode_ = 256;
-  private static final int yyntokens_ = 33;
+  private static final int yyntokens_ = 41;
 
-  private static final int yyuser_token_number_max_ = 287;
+  private static final int yyuser_token_number_max_ = 295;
   private static final int yyundef_token_ = 2;
 
 /* User implementation code.  */
 /* Unqualified %code blocks.  */
-/* "Eiffel.y":71  */ /* lalr1.java:1066  */
+/* "Eiffel.y":87  */ /* lalr1.java:1066  */
 
-    private int const_counter = 0;
-    private int expr_counter = 0;
-    
     private IntermediateCodeGenerator generator = IntermediateCodeGenerator.getInstance();
-    
-    private String getLocalVar() {
-        return "e" + Integer.toString(expr_counter++);
-    }
-    
-    private String getStaticVar() {
-        return "s" + Integer.toString(const_counter++);
-    }
 
-/* "../src/ru/spbau/tishchenko/compilers/eiffel/parser/Eiffel.java":1351  */ /* lalr1.java:1066  */
+/* "../src/ru/spbau/tishchenko/compilers/eiffel/parser/Eiffel.java":1461  */ /* lalr1.java:1066  */
 
 }
 
-/* "Eiffel.y":228  */ /* lalr1.java:1070  */
+/* "Eiffel.y":247  */ /* lalr1.java:1070  */
 
